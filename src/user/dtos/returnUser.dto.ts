@@ -10,11 +10,15 @@ export class ReturnUserDto {
   addresses?: ReturnAddressDto[];
 
   constructor(userEntity: UserEntity) {
+    const firstNumber = userEntity.cpf.charAt(0);
+    const lastNumbers = userEntity.cpf.slice(-2);
+    const asterisk = '*'.repeat(userEntity.cpf.length - 3);
+
     this.id = userEntity.id;
     this.name = userEntity.name;
     this.email = userEntity.email;
     this.phone = userEntity.phone;
-    this.cpf = userEntity.cpf;
+    this.cpf = firstNumber + asterisk + lastNumbers;
     this.addresses = userEntity.addresses
       ? userEntity.addresses.map((address) => new ReturnAddressDto(address))
       : undefined;
