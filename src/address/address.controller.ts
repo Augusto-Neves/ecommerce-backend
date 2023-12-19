@@ -20,8 +20,8 @@ export class AddressController {
   @Post()
   @UsePipes(ValidationPipe)
   async createAddress(
-    @UserId() user_id: number,
     @Body() createAddressDto: CreateAddressDto,
+    @UserId() user_id: number,
   ): Promise<AddressEntity> {
     return this.addressService.createAddress(createAddressDto, user_id);
   }
