@@ -80,6 +80,16 @@
     "collectCoverageFrom": [
       "**/*.(t|j)s"
     ],
+    "coveragePathIgnorePatterns": [
+      "node_modules",
+      "test-config",
+      "interfaces",
+      "jestGlobalMocks.ts",
+      ".module.ts",
+      "main.ts",
+      ".mock.ts",
+      "src/migration/"
+    ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
   }
