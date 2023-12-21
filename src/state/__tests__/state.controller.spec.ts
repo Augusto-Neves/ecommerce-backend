@@ -1,6 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { CacheService } from '../../cache/cache.service';
 import { StateController } from '../state.controller';
 import { StateService } from '../state.service';
 import { stateMock } from '../__mocks__/state.mock';
@@ -15,12 +14,6 @@ describe('StateController', () => {
       controllers: [StateController],
       providers: [
         StateService,
-        {
-          provide: CacheService,
-          useValue: {
-            getCacheData: jest.fn().mockResolvedValue([stateMock]),
-          },
-        },
         {
           provide: getRepositoryToken(StateEntity),
           useValue: {
