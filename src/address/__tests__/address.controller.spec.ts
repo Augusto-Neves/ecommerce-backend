@@ -10,6 +10,7 @@ import { CityService } from '../../city/city.service';
 import { cityMock } from '../../city/__mocks__/city.mock';
 import { createAddressMock } from '../__mocks__/createAddressDto.mock';
 import { AddressController } from '../address.controller';
+import { ReturnAddressDto } from '../dto/returnAddress.dto';
 
 describe('AddressModule', () => {
   let controller: AddressController;
@@ -69,5 +70,13 @@ describe('AddressModule', () => {
     );
 
     expect(address).toEqual(addressMock);
+  });
+
+  it('should return all addresses from user id', async () => {
+    jest.spyOn(service, 'findAddressByUserId').mockResolvedValue([addressMock]);
+
+    const addresses = await controller.findAddressByUserId(userEntityMock.id);
+
+    expect(addresses).toEqual([new ReturnAddressDto(addressMock)]);
   });
 });
