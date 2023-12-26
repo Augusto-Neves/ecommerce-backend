@@ -4,6 +4,7 @@ import { UserEntity } from './entities/user.entity';
 import { hash } from 'bcrypt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { UserType } from './enum/user-types.enum';
 
 @Injectable()
 export class UserService {
@@ -23,11 +24,15 @@ export class UserService {
     const saltsOfRounds = 12;
     const encryptedPassword = await hash(createUserDto.password, saltsOfRounds);
 
-    return this.userRepository.save({
+    const newUser = this.userRepository.create({
       ...createUserDto,
-      type_user: 1,
+      type_user: UserType.User,
       password: encryptedPassword,
     });
+
+    await this.userRepository.insert(newUser);
+
+    return newUser;
   }
 
   async getUserByIdUsingRelations(user_id: number): Promise<UserEntity> {

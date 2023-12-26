@@ -22,10 +22,14 @@ export class AddressService {
     await this.userService.findUserById(userId);
     await this.cityService.findCityById(createAddressDto.city_id);
 
-    return this.addressRepository.save({
+    const address = this.addressRepository.create({
       ...createAddressDto,
       user_id: userId,
     });
+
+    await this.addressRepository.insert(address);
+
+    return address;
   }
 
   async findAddressByUserId(userId: number): Promise<AddressEntity[]> {
