@@ -4,6 +4,7 @@ import { Repository } from 'typeorm';
 import { CategoryEntity } from '../entities/category.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { categoryEntityMock } from '../__mocks__/category.mock';
+import { createCategoryMock } from '../__mocks__/createCategory.mock';
 
 describe('CategoryService', () => {
   let service: CategoryService;
@@ -17,7 +18,9 @@ describe('CategoryService', () => {
           provide: getRepositoryToken(CategoryEntity),
           useValue: {
             find: jest.fn().mockResolvedValue([categoryEntityMock]),
-            save: jest.fn().mockResolvedValue(categoryEntityMock),
+            findOne: jest.fn().mockResolvedValue(categoryEntityMock),
+            create: jest.fn().mockResolvedValue(categoryEntityMock),
+            insert: jest.fn().mockResolvedValue({}),
           },
         },
       ],
@@ -34,25 +37,79 @@ describe('CategoryService', () => {
     expect(categoryRepository).toBeDefined();
   });
 
-  it('should return a list of categories', async () => {
-    const categories = await service.findAllCategories();
+  describe('findAllCategories', () => {
+    it('should return a list of categories', async () => {
+      const categories = await service.findAllCategories();
 
-    expect(categories).toEqual([categoryEntityMock]);
+      expect(categories).toEqual([categoryEntityMock]);
+    });
+
+    it('should return an error if list of categories is empty', async () => {
+      jest.spyOn(categoryRepository, 'find').mockResolvedValue([]);
+
+      const categories = service.findAllCategories();
+
+      expect(categories).rejects.toThrow();
+    });
+
+    it('should return an error if something went wrong in database', async () => {
+      jest.spyOn(categoryRepository, 'find').mockRejectedValue(new Error());
+
+      const categories = service.findAllCategories();
+
+      expect(categories).rejects.toThrow();
+    });
   });
 
-  it('should return an error if list of categories is empty', async () => {
-    jest.spyOn(categoryRepository, 'find').mockResolvedValue([]);
+  describe('createCategory', () => {
+    it('should return a category after create a new category', async () => {
+      jest.spyOn(categoryRepository, 'findOne').mockResolvedValue(undefined);
 
-    const categories = service.findAllCategories();
+      const category = await service.createCategory(createCategoryMock);
 
-    expect(categories).rejects.toThrow();
+      expect(category).toEqual(categoryEntityMock);
+    });
+
+    it('should return an error if occurred an exception', async () => {
+      jest.spyOn(categoryRepository, 'insert').mockRejectedValue(new Error());
+
+      const category = service.createCategory(createCategoryMock);
+
+      expect(category).rejects.toThrow();
+    });
   });
 
-  it('should return an error if something went wrong in database', async () => {
-    jest.spyOn(categoryRepository, 'find').mockRejectedValue(new Error());
+  describe('findCategoryByName', () => {
+    it('should return a category searched by your name', async () => {
+      const category = await service.findCategoryByName(
+        createCategoryMock.name,
+      );
 
-    const categories = service.findAllCategories();
+      expect(category).toEqual(categoryEntityMock);
+    });
 
-    expect(categories).rejects.toThrow();
+    it('should return an error if category is not found by your name', () => {
+      jest.spyOn(categoryRepository, 'findOne').mockResolvedValue(undefined);
+
+      const category = service.findCategoryByName(createCategoryMock.name);
+
+      expect(category).rejects.toThrow();
+    });
+  });
+
+  describe('findCategoryById', () => {
+    it('should return an category when it searched by category_id', async () => {
+      const category = await service.findByCategoryId(categoryEntityMock.id);
+
+      expect(category).toEqual(categoryEntityMock);
+    });
+
+    it('should return an error when category is not found', async () => {
+      jest.spyOn(categoryRepository, 'findOne').mockReturnValue(undefined);
+
+      const category = service.findByCategoryId(categoryEntityMock.id);
+
+      expect(category).rejects.toThrow();
+    });
   });
 });
