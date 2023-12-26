@@ -36,5 +36,5 @@ export class ProductEntity {
     (category: CategoryEntity) => category.products,
   )
   @JoinColumn({ name: 'category_id', referencedColumnName: 'id' })
-  category: CategoryEntity;
+  category?: CategoryEntity;
 }
