@@ -5,6 +5,13 @@ import { UserEntity } from '../entities/user.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { userEntityMock } from '../__mocks__/user.mock';
 import { createUserMock } from '../__mocks__/createUser.mock';
+import {
+  updatePasswordInvalidMock,
+  updatePasswordMock,
+} from '../__mocks__/updatePassword.mock';
+import { returnUpdateMock } from '../../__mocks__/returnUpdate.mock';
+import { validatePassword } from '../../utils/validate-password';
+import { BadRequestException } from '@nestjs/common';
 
 describe('UserService', () => {
   let service: UserService;
@@ -21,6 +28,7 @@ describe('UserService', () => {
             findOne: jest.fn().mockResolvedValue(userEntityMock),
             create: jest.fn().mockResolvedValue(userEntityMock),
             insert: jest.fn().mockResolvedValue({}),
+            update: jest.fn().mockResolvedValue(returnUpdateMock),
           },
         },
       ],
@@ -88,6 +96,41 @@ describe('UserService', () => {
 
       const user = await service.createUser(createUserMock);
       expect(user).toEqual(userEntityMock);
+    });
+  });
+
+  describe('updateUserPassword', () => {
+    it('should return an error if user does not exists on database', async () => {
+      jest.spyOn(userRepository, 'findOne').mockReturnValue(undefined);
+
+      const updateUserPassword = service.updateUserPassword(
+        updatePasswordMock,
+        userEntityMock.id,
+      );
+
+      expect(updateUserPassword).rejects.toThrow();
+    });
+
+    it('should update user password', async () => {
+      const updateUserPassword = await service.updateUserPassword(
+        updatePasswordMock,
+        userEntityMock.id,
+      );
+
+      expect(updateUserPassword).toEqual(returnUpdateMock);
+    });
+
+    it('should return an error if given password is different from user password', async () => {
+      jest.fn(validatePassword).mockResolvedValue(false);
+
+      const updateUserPassword = service.updateUserPassword(
+        updatePasswordInvalidMock,
+        userEntityMock.id,
+      );
+
+      expect(updateUserPassword).rejects.toThrow(
+        new BadRequestException('Last password is invalid'),
+      );
     });
   });
 });

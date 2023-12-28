@@ -6,6 +6,8 @@ import { userEntityMock } from '../__mocks__/user.mock';
 import { UserEntity } from '../entities/user.entity';
 import { createUserMock } from '../__mocks__/createUser.mock';
 import { returnUserDtoMock } from '../__mocks__/returnUserDto.mock';
+import { returnUpdateMock } from '../../__mocks__/returnUpdate.mock';
+import { updatePasswordMock } from '../__mocks__/updatePassword.mock';
 
 describe('UserController', () => {
   let controller: UserController;
@@ -58,5 +60,18 @@ describe('UserController', () => {
 
     const user = await controller.getUserByUserId(userEntityMock.id);
     expect(user).toEqual(returnUserDtoMock);
+  });
+
+  it('should update user password', async () => {
+    jest
+      .spyOn(service, 'updateUserPassword')
+      .mockResolvedValue(returnUpdateMock);
+
+    const updateUserPassword = await controller.updateUserPassword(
+      userEntityMock.id,
+      updatePasswordMock,
+    );
+
+    expect(updateUserPassword).toEqual(returnUpdateMock);
   });
 });
