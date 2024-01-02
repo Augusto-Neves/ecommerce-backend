@@ -23,9 +23,6 @@ export class CartProductEntity {
   @Column({ name: 'amount', nullable: false })
   amount: number;
 
-  @Column({ name: 'active', nullable: false })
-  active: boolean;
-
   @CreateDateColumn({ name: 'created_at' })
   created_at: Date;
 
