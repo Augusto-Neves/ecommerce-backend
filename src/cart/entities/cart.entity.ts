@@ -15,6 +15,9 @@ export class CartEntity {
   @Column({ name: 'user_id', nullable: false })
   user_id: number;
 
+  @Column({ name: 'active', nullable: false })
+  active: boolean;
+
   @CreateDateColumn({ name: 'created_at' })
   created_at: Date;
 
