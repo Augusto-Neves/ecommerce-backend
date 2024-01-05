@@ -83,7 +83,7 @@ export class CartProductService {
     });
   }
 
-  async updateProductInCart(
+  async updateProductCart(
     updateCartDto: UpdateCartDto,
     cart: CartEntity,
   ): Promise<CartProductEntity> {
