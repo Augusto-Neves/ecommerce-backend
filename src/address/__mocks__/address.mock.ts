@@ -11,4 +11,6 @@ export const addressMock: AddressEntity = {
   numberAddress: 687,
   updated_at: new Date(),
   user_id: userEntityMock.id,
+  city: cityMock,
+  user: userEntityMock,
 };
