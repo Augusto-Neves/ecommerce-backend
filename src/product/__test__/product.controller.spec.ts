@@ -5,6 +5,7 @@ import { productMock } from '../__mock__/product.mock';
 import { ReturnProductDto } from '../dtos/returnProduct.dto';
 import { returnDeleteMock } from '../../__mocks__/returnDelete.mock';
 import { createProductMock } from '../__mock__/createProduct.mock';
+import { updateProductMock } from '../__mock__/updateProduct.mock';
 
 describe('ProductController', () => {
   let controller: ProductController;
@@ -20,6 +21,7 @@ describe('ProductController', () => {
             getAllProducts: jest.fn().mockResolvedValue([productMock]),
             createProduct: jest.fn().mockResolvedValue(productMock),
             deleteProduct: jest.fn().mockResolvedValue(returnDeleteMock),
+            updateProduct: jest.fn().mockResolvedValue(productMock),
           },
         },
       ],
@@ -50,5 +52,14 @@ describe('ProductController', () => {
     );
 
     expect(deleteProduct).toEqual(returnDeleteMock);
+  });
+
+  it('should update a product', async () => {
+    const updateProduct = await controller.updateProduct(
+      updateProductMock,
+      productMock.id,
+    );
+
+    expect(updateProduct).toEqual(productMock);
   });
 });
