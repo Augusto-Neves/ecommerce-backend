@@ -14,7 +14,6 @@ describe('ProductController', () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [ProductController],
       providers: [
-        ProductService,
         {
           provide: ProductService,
           useValue: {

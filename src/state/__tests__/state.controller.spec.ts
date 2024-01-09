@@ -1,9 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
 import { StateController } from '../state.controller';
 import { StateService } from '../state.service';
 import { stateMock } from '../__mocks__/state.mock';
-import { StateEntity } from '../entities/state.entity';
 
 describe('StateController', () => {
   let controller: StateController;
@@ -13,12 +11,10 @@ describe('StateController', () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [StateController],
       providers: [
-        StateService,
         {
-          provide: getRepositoryToken(StateEntity),
+          provide: StateService,
           useValue: {
-            find: jest.fn().mockResolvedValue([stateMock]),
-            findOne: jest.fn().mockResolvedValue(stateMock),
+            getAllStates: jest.fn().mockResolvedValue([stateMock]),
           },
         },
       ],
@@ -34,8 +30,6 @@ describe('StateController', () => {
   });
 
   it('should return all states', async () => {
-    jest.spyOn(service, 'getAllStates').mockResolvedValue([stateMock]);
-
     const states = await controller.getAllStates();
 
     expect(states).toEqual([stateMock]);
