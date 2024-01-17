@@ -9,7 +9,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-@Entity({ name: 'payment_status' })
+@Entity({ name: 'order_product' })
 export class OrderProductEntity {
   @PrimaryGeneratedColumn('rowid')
   id: number;
