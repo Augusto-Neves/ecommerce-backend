@@ -3,6 +3,10 @@ import { OrderService } from '../order.service';
 import { Repository } from 'typeorm';
 import { OrderEntity } from '../entities/order.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
+import { PaymentService } from '../../payment/payment.service';
+import { CartService } from '../../cart/cart.service';
+import { OrderProductService } from '../../order-product/order-product.service';
+import { ProductService } from '../../product/product.service';
 
 describe('OrderService', () => {
   let service: OrderService;
@@ -14,6 +18,22 @@ describe('OrderService', () => {
         OrderService,
         {
           provide: getRepositoryToken(OrderEntity),
+          useValue: {},
+        },
+        {
+          provide: PaymentService,
+          useValue: {},
+        },
+        {
+          provide: CartService,
+          useValue: {},
+        },
+        {
+          provide: OrderProductService,
+          useValue: {},
+        },
+        {
+          provide: ProductService,
           useValue: {},
         },
       ],

@@ -12,7 +12,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-@Entity({ name: 'payment_status' })
+@Entity({ name: 'order' })
 export class OrderEntity {
   @PrimaryGeneratedColumn('rowid')
   id: number;
@@ -28,9 +28,6 @@ export class OrderEntity {
 
   @Column({ name: 'payment_id', nullable: false })
   payment_id: number;
-
-  @Column({ name: 'state_id', nullable: false })
-  state_id: number;
 
   @CreateDateColumn({ name: 'created_at' })
   created_at: Date;
