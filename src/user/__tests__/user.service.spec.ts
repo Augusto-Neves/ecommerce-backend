@@ -10,7 +10,7 @@ import {
   updatePasswordMock,
 } from '../__mocks__/updatePassword.mock';
 import { returnUpdateMock } from '../../__mocks__/returnUpdate.mock';
-import { validatePassword } from '../../utils/validate-password';
+import * as validatePassword from '../../utils/validate-password';
 import { BadRequestException } from '@nestjs/common';
 
 describe('UserService', () => {
@@ -121,7 +121,7 @@ describe('UserService', () => {
     });
 
     it('should return an error if given password is different from user password', async () => {
-      jest.fn(validatePassword).mockResolvedValue(false);
+      jest.spyOn(validatePassword, 'validatePassword').mockResolvedValue(false);
 
       const updateUserPassword = service.updateUserPassword(
         updatePasswordInvalidMock,
