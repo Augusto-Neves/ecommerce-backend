@@ -13,7 +13,7 @@ export class PaymentStatusEntity {
   id: number;
 
   @Column({ name: 'name', nullable: false })
-  name: number;
+  name: string;
 
   @CreateDateColumn({ name: 'created_at' })
   created_at: Date;
