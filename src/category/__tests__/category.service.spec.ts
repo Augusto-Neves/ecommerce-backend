@@ -5,6 +5,9 @@ import { CategoryEntity } from '../entities/category.entity';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { categoryEntityMock } from '../__mocks__/category.mock';
 import { createCategoryMock } from '../__mocks__/createCategory.mock';
+import { ProductService } from '../../product/product.service';
+import { countProductDtoMock } from '../../product/__mock__/countProduct.mock';
+import { ReturnCategoryDto } from '../dtos/returnCategory.dto';
 
 describe('CategoryService', () => {
   let service: CategoryService;
@@ -21,6 +24,15 @@ describe('CategoryService', () => {
             findOne: jest.fn().mockResolvedValue(categoryEntityMock),
             create: jest.fn().mockResolvedValue(categoryEntityMock),
             insert: jest.fn().mockResolvedValue({}),
+          },
+        },
+
+        {
+          provide: ProductService,
+          useValue: {
+            countProductByCategoryId: jest
+              .fn()
+              .mockResolvedValue([countProductDtoMock]),
           },
         },
       ],
@@ -41,7 +53,9 @@ describe('CategoryService', () => {
     it('should return a list of categories', async () => {
       const categories = await service.findAllCategories();
 
-      expect(categories).toEqual([categoryEntityMock]);
+      expect(categories).toEqual([
+        new ReturnCategoryDto(categoryEntityMock, countProductDtoMock.total),
+      ]);
     });
 
     it('should return an error if list of categories is empty', async () => {
