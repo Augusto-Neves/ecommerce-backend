@@ -1,10 +1,11 @@
 import { ReturnUserDto } from '../dtos/returnUser.dto';
+import { userEntityMock } from './user.mock';
 
 export const returnUserDtoMock: ReturnUserDto = {
-  id: 1987,
-  name: 'John',
-  email: 'user@example.com',
-  phone: '87988754654',
+  id: userEntityMock.id,
+  name: userEntityMock.name,
+  email: userEntityMock.email,
+  phone: userEntityMock.phone,
   cpf: '3********19',
   addresses: [],
 };

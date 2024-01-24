@@ -62,4 +62,10 @@ describe('UserController', () => {
 
     expect(updateUserPassword).toEqual(returnUpdateMock);
   });
+
+  it('should return user information', async () => {
+    const userInfo = await controller.getUserInfo(userEntityMock.id);
+
+    expect(userInfo).toEqual(returnUserDtoMock);
+  });
 });
