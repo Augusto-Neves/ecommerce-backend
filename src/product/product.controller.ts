@@ -23,7 +23,7 @@ export class ProductController {
   @Roles(UserType.Admin, UserType.User)
   @Get()
   async getAllProducts(): Promise<ReturnProductDto[]> {
-    const products = (await this.productService.getAllProducts()).map(
+    const products = (await this.productService.getAllProducts([], true)).map(
       (product) => new ReturnProductDto(product),
     );
 
