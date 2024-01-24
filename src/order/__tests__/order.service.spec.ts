@@ -32,6 +32,7 @@ describe('OrderService', () => {
             create: jest.fn().mockResolvedValue(orderEntityMock),
             insert: jest.fn().mockResolvedValue(returnInsertMock),
             find: jest.fn().mockResolvedValue([orderEntityMock]),
+            findOne: jest.fn().mockResolvedValue(orderEntityMock),
           },
         },
         {
@@ -123,6 +124,70 @@ describe('OrderService', () => {
       jest.spyOn(orderRepository, 'find').mockResolvedValue([]);
 
       const order = service.findOrdersByUserId(userEntityMock.id);
+
+      expect(order).rejects.toThrow(NotFoundException);
+    });
+  });
+
+  describe('findAllOrders', () => {
+    it('should return a list of all orders with relations', async () => {
+      const spy = jest.spyOn(orderRepository, 'find');
+      const allOrders = await service.findAllOrders();
+
+      expect(allOrders).toEqual([orderEntityMock]);
+      expect(spy).toHaveBeenCalledWith({
+        relations: {
+          user: true,
+        },
+      });
+    });
+
+    it('should throw an error if any order has not found', async () => {
+      jest
+        .spyOn(orderRepository, 'find')
+        .mockRejectedValue(new NotFoundException());
+
+      const allOrders = service.findAllOrders();
+
+      expect(allOrders).rejects.toThrow(NotFoundException);
+    });
+
+    it('should return an error if retrieve an empty array', async () => {
+      jest.spyOn(orderRepository, 'find').mockResolvedValue([]);
+
+      const allOrders = service.findAllOrders();
+
+      expect(allOrders).rejects.toThrow(NotFoundException);
+    });
+  });
+
+  describe('findByOrderId', () => {
+    it('should return an order when it will searched by the order id', async () => {
+      const spy = jest.spyOn(orderRepository, 'findOne');
+      const order = await service.findByOrderId(orderEntityMock.id);
+
+      expect(order).toEqual(orderEntityMock);
+      expect(spy).toHaveBeenCalledWith({
+        where: {
+          id: orderEntityMock.id,
+        },
+        relations: {
+          address: true,
+          orders_product: {
+            product: true,
+          },
+          payment: {
+            payment_status: true,
+          },
+          user: true,
+        },
+      });
+    });
+
+    it('should throw an erro if no order is found', async () => {
+      jest.spyOn(orderRepository, 'findOne').mockResolvedValue(null);
+
+      const order = service.findByOrderId(orderEntityMock.id);
 
       expect(order).rejects.toThrow(NotFoundException);
     });
