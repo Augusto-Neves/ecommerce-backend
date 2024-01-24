@@ -105,4 +105,42 @@ export class OrderService {
 
     return orders;
   }
+
+  async findAllOrders(): Promise<OrderEntity[]> {
+    const orders = await this.orderRepository.find({
+      relations: {
+        user: true,
+      },
+    });
+
+    if (!orders || orders.length === 0) {
+      throw new NotFoundException('Orders not found');
+    }
+
+    return orders;
+  }
+
+  async findByOrderId(order_id: number): Promise<OrderEntity> {
+    const order = await this.orderRepository.findOne({
+      where: {
+        id: order_id,
+      },
+      relations: {
+        address: true,
+        orders_product: {
+          product: true,
+        },
+        payment: {
+          payment_status: true,
+        },
+        user: true,
+      },
+    });
+
+    if (!order) {
+      throw new NotFoundException(`Order with id ${order_id} not found`);
+    }
+
+    return order;
+  }
 }
