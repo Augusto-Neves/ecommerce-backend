@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ProductService } from '../product.service';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { ProductEntity } from '../entities/product.entity';
 import { productMock } from '../__mock__/product.mock';
@@ -65,6 +65,33 @@ describe('ProductService', () => {
       const products = await service.getAllProducts(product_ids);
 
       expect(products).toEqual([productMock]);
+    });
+
+    it('should return a list of products when relations are passed', async () => {
+      const syp = jest.spyOn(productRepository, 'find');
+      const products = await service.getAllProducts([], true);
+
+      expect(products).toEqual([productMock]);
+      expect(syp).toHaveBeenCalledWith({
+        relations: {
+          category: true,
+        },
+      });
+    });
+
+    it('should return a list of products when array of id and relations are passed', async () => {
+      const syp = jest.spyOn(productRepository, 'find');
+      const products = await service.getAllProducts([productMock.id], true);
+
+      expect(products).toEqual([productMock]);
+      expect(syp).toHaveBeenCalledWith({
+        where: {
+          id: In([productMock.id]),
+        },
+        relations: {
+          category: true,
+        },
+      });
     });
 
     it('should return an error if no products are found', async () => {
