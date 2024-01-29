@@ -7,4 +7,5 @@ export const cityMock: CityEntity = {
   name: 'City',
   state_id: stateMock.id,
   updated_at: new Date(),
+  state: stateMock,
 };
