@@ -17,9 +17,11 @@ import { cartEntityMock } from '../../cart/__mocks__/cartEntity.mock';
 import { productMock } from '../../product/__mock__/product.mock';
 import { returnUpdateMock } from '../../__mocks__/returnUpdate.mock';
 import { NotFoundException } from '@nestjs/common';
+import { returnGroupOrderDtoMock } from '../../order-product/__mocks__/returnGroupOrderDto.mock';
 
 describe('OrderService', () => {
   let service: OrderService;
+  let orderProductService: OrderProductService;
   let orderRepository: Repository<OrderEntity>;
 
   beforeEach(async () => {
@@ -54,6 +56,9 @@ describe('OrderService', () => {
             createOrderProduct: jest
               .fn()
               .mockResolvedValue(orderProductEntityMock),
+            findAmountOfProductsByOrderId: jest
+              .fn()
+              .mockResolvedValue([returnGroupOrderDtoMock]),
           },
         },
         {
@@ -66,6 +71,7 @@ describe('OrderService', () => {
     }).compile();
 
     service = module.get<OrderService>(OrderService);
+    orderProductService = module.get<OrderProductService>(OrderProductService);
     orderRepository = module.get<Repository<OrderEntity>>(
       getRepositoryToken(OrderEntity),
     );
@@ -73,6 +79,7 @@ describe('OrderService', () => {
 
   it('should be defined', () => {
     expect(service).toBeDefined();
+    expect(orderProductService).toBeDefined();
     expect(orderRepository).toBeDefined();
   });
 
@@ -142,6 +149,22 @@ describe('OrderService', () => {
       });
     });
 
+    it('should return a list of all orders if findAmountOfProductsByOrderId is empty', async () => {
+      jest
+        .spyOn(orderProductService, 'findAmountOfProductsByOrderId')
+        .mockResolvedValue([]);
+
+      const spy = jest.spyOn(orderRepository, 'find');
+      const allOrders = await service.findAllOrders();
+
+      expect(allOrders).toEqual([orderEntityMock]);
+      expect(spy).toHaveBeenCalledWith({
+        relations: {
+          user: true,
+        },
+      });
+    });
+
     it('should throw an error if any order has not found', async () => {
       jest
         .spyOn(orderRepository, 'find')
@@ -172,7 +195,11 @@ describe('OrderService', () => {
           id: orderEntityMock.id,
         },
         relations: {
-          address: true,
+          address: {
+            city: {
+              state: true,
+            },
+          },
           orders_product: {
             product: true,
           },
