@@ -117,7 +117,25 @@ export class OrderService {
       throw new NotFoundException('Orders not found');
     }
 
-    return orders;
+    const ordersProduct =
+      await this.orderProductService.findAmountOfProductsByOrderId(
+        orders.map((order) => order.id),
+      );
+
+    return orders.map((order) => {
+      const orderProduct = ordersProduct.find(
+        (currentOrder) => currentOrder.order_id === order.id,
+      );
+
+      if (orderProduct) {
+        return {
+          ...order,
+          amount_products: Number(orderProduct.total),
+        };
+      }
+
+      return order;
+    });
   }
 
   async findByOrderId(order_id: number): Promise<OrderEntity> {
@@ -126,7 +144,11 @@ export class OrderService {
         id: order_id,
       },
       relations: {
-        address: true,
+        address: {
+          city: {
+            state: true,
+          },
+        },
         orders_product: {
           product: true,
         },

@@ -27,9 +27,9 @@ export class OrderController {
   @Roles(UserType.Admin)
   @Get('/all')
   async findAllOrders(): Promise<ReturnOrderDto[]> {
-    const allOrder = await this.orderService.findAllOrders();
+    const allOrders = await this.orderService.findAllOrders();
 
-    return allOrder.map((order) => new ReturnOrderDto(order));
+    return allOrders.map((order) => new ReturnOrderDto(order));
   }
 
   @Roles(UserType.Admin)
